@@ -127,7 +127,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="adjacentCityNode.cpp" />
+    <ClCompile Include="cityNameNode.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Jak_dojade.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="adjacentCityNode.h" />
+    <ClInclude Include="cityNameNode.h" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="Graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

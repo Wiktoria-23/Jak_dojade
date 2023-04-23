@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <stdio.h>
+#include "Graph.h"
 #define SPACE ' '
 #define NEW_LINE '\n'
 #define TAB '\t'
@@ -37,7 +38,7 @@ int readCityName(char* cityName, int x, char* mapLine) {
 	return size;
 }
 
-char* findCityName(int x, int y, char** map, int width, int height) {
+void addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph) {
 	char* input = new char[BUFFER_SIZE];
 	int size = 0;
 	if (y - 1 >= 0 && map[y - 1][x] != NOTHING && map[y - 1][x] != ROAD) {
@@ -70,29 +71,61 @@ char* findCityName(int x, int y, char** map, int width, int height) {
 	}
 	cityName[size] = END_OF_TEXT;
 	delete[] input;
-	return cityName;
+	mapGraph->addNewCityName(cityName, size);
 }
 
-void readMap(int height, int width, char** map) {
+void readRoad(Graph* mapGraph, char** map, int x, int y) {
+	if (map[y - 1][x] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+	else if (map[y + 1][x] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+	else if (map[y][x - 1] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+	else if (map[y][x + 1] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}//rekurencyjne dodawanie drogi (rozwidlenia)(?)
+}
+
+void checkRoads(int x, int y, char** map, int width, int height, Graph* mapGraph) {
+	if (map[y - 1][x] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+	else if (map[y + 1][x] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+	else if (map[y][x - 1] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+	else if (map[y][x + 1] == ROAD) {
+		readRoad(mapGraph, map, x, y);
+	}
+}
+
+void readMap(int height, int width, char** map, Graph* mapGraph) {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
-				char* cityName = findCityName(x, y, map, width, height);
+				addCityName(x, y, map, width, height, mapGraph);
+				checkRoads(x, y, map, width, height, mapGraph);
 			}
 		}
 	}
 }
 
-int main() {//dodac wczytywanie calej tablicy do programu, nastepnie dodac zczytywanie nazw miast, pozniej polaczen
+int main() {
 	int width, height;
 	cin >> width;
 	cin >> height;
+	Graph* mapGraph = new Graph();
 	char** map = new char*[height];
 	for (int i = 0; i < height; i++) {
 		map[i] = new char[width];
 	}
 	getMap(height, width, map);
-	readMap(height, width, map);
+	readMap(height, width, map, mapGraph);
 	for (int i = 0; i < height; i++) {
 		delete[] map[i];
 	}

@@ -12,7 +12,7 @@ cityNameNode* Graph::findCityByName(char* cityName) {
 }
 cityNameNode* Graph::findCityByCoordinates(int xPosition, int yPosition) {
 	cityNameNode* currentCityName = cityNames->getHead();
-	while (currentCityName!= nullptr && currentCityName->getX() != xPosition && currentCityName->getY() != yPosition) {
+	while (currentCityName != nullptr && (currentCityName->getX() != xPosition || currentCityName->getY() != yPosition)) {
 		currentCityName = currentCityName->getNextNode();
 	}
 	return currentCityName;

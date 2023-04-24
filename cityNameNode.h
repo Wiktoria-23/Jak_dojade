@@ -6,10 +6,15 @@ private:
 	List<adjacentCityNode>* adjacentCitiesList;
 	cityNameNode* next;
 	char* cityName;
-	int cityNameLength;
+	int x;
+	int y;
 public:
-	cityNameNode(int newCityNameLength, char* newCityName);
+	cityNameNode(char* newCityName, int xPosition, int yPosition);
+	char* getCityName();
+	int getX();
+	int getY();
 	void setNextNode(cityNameNode* newNext);
+	void addNewAdjacentCity(int distance, char* adjacentCityName);
 	cityNameNode* getNextNode();
 	~cityNameNode();
 };

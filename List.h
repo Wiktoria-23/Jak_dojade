@@ -7,7 +7,13 @@ private:
 public:
 	List() : head(nullptr), tail(nullptr) {
 	}
-	void addNextNode(T* nextNode) {
+	T* getHead() {
+		return head;
+	}
+	T* getTail() {
+		return tail;
+	}
+	void addNewLastNode(T* nextNode) {
 		if (head == nullptr) {
 			head = nextNode;
 			tail = nextNode;

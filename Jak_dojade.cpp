@@ -21,11 +21,11 @@ enum direction {
 
 void getMap(int height, int width, char** map);
 int readCityName(char* cityName, int x, char* mapLine);
-void addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph);
-void addRoad();
-void readRoad(Graph* mapGraph, char** map, int x, int y, direction roadDirection, int lengthCounter, int width, int height);
-void checkRoads(int x, int y, char** map, int width, int height, Graph* mapGraph, direction previousRoadDirection, int lengthCounter = 0);
-int readRoadLength(int x, int y, int lengthCounter, char** map, direction roadDirection, Graph* mapGraph, int width, int height);
+char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph);
+void addRoad(Graph* mapGraph, char* cityName, int cityNameLength, int cityX, int cityY, int distance);
+void readRoad(Graph* mapGraph, char** map, int x, int y, direction roadDirection, int lengthCounter, int width, int height, char* cityName);
+void checkRoads(int x, int y, char** map, int width, int height, Graph* mapGraph, direction previousRoadDirection, char* cityName, int lengthCounter = 0);
+int readRoadLength(int x, int y, int lengthCounter, char** map, direction roadDirection, Graph* mapGraph, int width, int height, char* cityName);
 void readMap(int height, int width, char** map, Graph* mapGraph);
 
 void getMap(int height, int width, char** map) {
@@ -55,7 +55,7 @@ int readCityName(char* cityName, int x, char* mapLine) {
 	return size;
 }
 
-void addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph) {
+char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph) {
 	char* input = new char[BUFFER_SIZE];
 	int size = 0;
 	if (y - 1 >= 0 && map[y - 1][x] != NOTHING && map[y - 1][x] != ROAD) {
@@ -88,116 +88,162 @@ void addCityName(int x, int y, char** map, int width, int height, Graph* mapGrap
 	}
 	cityName[size] = END_OF_TEXT;
 	delete[] input;
-	mapGraph->addNewCityName(cityName, size);
+	mapGraph->addNewCityName(cityName, x, y);
+	return cityName;
 }
 
-void addRoad() {
-
+int findCityNameLength(char* cityName) {
+	int counter = 0;
+	while (cityName[counter] != END_OF_TEXT) {
+		counter += 1;
+	}
+	return counter;
 }
 
-void readRoad(Graph* mapGraph, char** map, int x, int y, direction roadDirection, int lengthCounter, int width, int height) {
+void addRoad(Graph* mapGraph, char* cityName, int cityX, int cityY, int distance) {
+	cityNameNode* destination = mapGraph->findCityByCoordinates(cityX, cityY);
+	mapGraph->findCityByName(cityName)->addNewAdjacentCity(distance, destination->getCityName());
+}
+
+void readRoad(Graph* mapGraph, char** map, int x, int y, direction roadDirection, int lengthCounter, int width, int height, char* cityName) {
 	if (y - 1 >=0 && map[y - 1][x] == ROAD && roadDirection != DOWN) {
 		if (roadDirection != UP) {
-			checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+			checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 		}
 		else {
-			lengthCounter = readRoadLength(x, y - 1, lengthCounter, map, roadDirection, mapGraph, width, height);
+			lengthCounter = readRoadLength(x, y, lengthCounter, map, roadDirection, mapGraph, width, height, cityName);
 		}
 	}
 	if (y + 1 < height && map[y + 1][x] == ROAD && roadDirection != UP) {
 		if (roadDirection != DOWN) {
-			checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+			checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 		}
 		else {
-			lengthCounter = readRoadLength(x, y + 1, lengthCounter, map, roadDirection, mapGraph, width, height);
+			lengthCounter = readRoadLength(x, y, lengthCounter, map, roadDirection, mapGraph, width, height, cityName);
 		}
 	}
 	if (x - 1 >= 0 && map[y][x - 1] == ROAD && roadDirection != RIGHT) {
 		if (roadDirection != LEFT) {
-			checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+			checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 		}
 		else {
-			lengthCounter = readRoadLength(x - 1, y, lengthCounter, map, roadDirection, mapGraph, width, height);
+			lengthCounter = readRoadLength(x, y, lengthCounter, map, roadDirection, mapGraph, width, height, cityName);
 		}
 	}
 	if (x + 1 < width && map[y][x + 1] == ROAD && roadDirection != LEFT) {
 		if (roadDirection != RIGHT) {
-			checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+			checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 		}
 		else {
-			lengthCounter = readRoadLength(x + 1, y, lengthCounter, map, roadDirection, mapGraph, width, height);
+			lengthCounter = readRoadLength(x, y, lengthCounter, map, roadDirection, mapGraph, width, height, cityName);
 		}
 	}
 }
 
-void checkRoads(int x, int y, char** map, int width, int height, Graph* mapGraph, direction previousRoadDirection, int lengthCounter) {
+void checkRoads(int x, int y, char** map, int width, int height, Graph* mapGraph, direction previousRoadDirection, char* cityName, int lengthCounter) {
 	lengthCounter += 1;
-	if (y - 1 >= 0 && map[y - 1][x] == ROAD && previousRoadDirection != DOWN) {
-		readRoad(mapGraph, map, x, y - 1, UP, lengthCounter, width, height);
+	if (y - 1 >= 0) {
+		if (map[y - 1][x] == ROAD && previousRoadDirection != DOWN) {
+			readRoad(mapGraph, map, x, y - 1, UP, lengthCounter, width, height, cityName);
+		}
+		else if (map[y - 1][x] == CITY_SYMBOL) {
+			addRoad(mapGraph, cityName, x, y - 1, lengthCounter);
+		}
 	}
-	if (y + 1 < height && map[y + 1][x] == ROAD && previousRoadDirection != UP) {
-		readRoad(mapGraph, map, x, y + 1, DOWN, lengthCounter, width, height);
+	if (y + 1 < height) {
+		if (map[y + 1][x] == ROAD && previousRoadDirection != UP) {
+			readRoad(mapGraph, map, x, y + 1, DOWN, lengthCounter, width, height, cityName);
+		}
+		else if (map[y + 1][x] == CITY_SYMBOL) {
+			addRoad(mapGraph, cityName, x, y + 1, lengthCounter);
+		}
 	}
-	if (x - 1 >= 0 && map[y][x - 1] == ROAD && previousRoadDirection != RIGHT) {
-		readRoad(mapGraph, map, x - 1, y, LEFT, lengthCounter, width, height);
+	if (x - 1 >= 0) {
+		if (map[y][x - 1] == ROAD && previousRoadDirection != RIGHT) {
+			readRoad(mapGraph, map, x - 1, y, LEFT, lengthCounter, width, height, cityName);
+		}
+		else if (map[y][x - 1] == CITY_SYMBOL) {
+			addRoad(mapGraph, cityName, x - 1, y, lengthCounter);
+		}
 	}
-	if (x + 1 < width && map[y][x + 1] == ROAD && previousRoadDirection != LEFT) {
-		readRoad(mapGraph, map, x + 1, y, RIGHT, lengthCounter, width, height);
+	if (x + 1 < width) {
+		if (map[y][x + 1] == ROAD && previousRoadDirection != LEFT) {
+			readRoad(mapGraph, map, x + 1, y, RIGHT, lengthCounter, width, height, cityName);
+		}
+		else if (map[y][x + 1] == CITY_SYMBOL) {
+			addRoad(mapGraph, cityName, x + 1, y, lengthCounter);
+		}
 	}
 }
 
-int readRoadLength(int x, int y, int lengthCounter, char** map, direction roadDirection, Graph* mapGraph, int width, int height) {
+int readRoadLength(int x, int y, int lengthCounter, char** map, direction roadDirection, Graph* mapGraph, int width, int height, char* cityName) {
 	while (map[y][x] == ROAD) {
 		lengthCounter += 1;
 		if (roadDirection == UP) {
 			if (y - 1 >= 0 && map[y - 1][x] == ROAD) {
+				if ((x - 1 >= 0 && map[y][x - 1] == ROAD) || (x + 1 < width && map[y][x + 1] == ROAD)) {
+					checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
+					break;
+				}
 				y -= 1;
 			}
 			else if (y - 1 >= 0 && map[y - 1][x] == CITY_SYMBOL) {
-				addRoad();
+				addRoad(mapGraph, cityName, x, y, lengthCounter);
 				break;
 			}
 			else {
-				checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+				checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 				break;
 			}
 		}
 		else if (roadDirection == DOWN) {
 			if (y + 1 < height && map[y + 1][x] == ROAD) {
+				if ((x - 1 >= 0 && map[y][x - 1] == ROAD) || (x + 1 < width && map[y][x + 1] == ROAD)) {
+					checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
+					break;
+				}
 				y += 1;
 			}
 			else if (y + 1 < height && map[y + 1][x] == CITY_SYMBOL) {
-				addRoad();
+				addRoad(mapGraph, cityName, x, y, lengthCounter);
 				break;
 			}
 			else {
-				checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+				checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 				break;
 			}
 		}
 		else if (roadDirection == LEFT) {
 			if (x - 1 >= 0 && map[y][x - 1] == ROAD) {
+				if ((y - 1 >= 0 && map[y - 1][x] == ROAD) || (y + 1 < height && map[y - 1][x] == ROAD)) {
+					checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
+					break;
+				}
 				x -= 1;
 			}
 			else if (x - 1 >= 0 && map[y][x - 1] == CITY_SYMBOL) {
-				addRoad();
+				addRoad(mapGraph, cityName, x, y, lengthCounter);
 				break;
 			}
 			else {
-				checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+				checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 				break;
 			}
 		}
 		else if (roadDirection == RIGHT) {
 			if (x + 1 < width && map[y][x + 1] == ROAD) {
+				if ((y - 1 >= 0 && map[y - 1][x] == ROAD) || (y + 1 < height && map[y - 1][x] == ROAD)) {
+					checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
+					break;
+				}
 				x += 1;
 			}
 			else if (x + 1 < width && map[y][x + 1] == CITY_SYMBOL) {
-				addRoad();
+				addRoad(mapGraph, cityName, x, y, lengthCounter);
 				break;
 			}
 			else {
-				checkRoads(x, y, map, width, height, mapGraph, roadDirection, lengthCounter);
+				checkRoads(x, y, map, width, height, mapGraph, roadDirection, cityName, lengthCounter);
 				break;
 			}
 		}
@@ -212,8 +258,15 @@ void readMap(int height, int width, char** map, Graph* mapGraph) {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
-				addCityName(x, y, map, width, height, mapGraph);
-				checkRoads(x, y, map, width, height, mapGraph, NONE);
+				char* cityName = addCityName(x, y, map, width, height, mapGraph);
+			}
+		}
+	}
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			if (map[y][x] == CITY_SYMBOL) {
+				char* cityName = mapGraph->findCityByCoordinates(x, y)->getCityName();
+				checkRoads(x, y, map, width, height, mapGraph, NONE, cityName);
 			}
 		}
 	}
@@ -230,7 +283,7 @@ int main() {
 	}
 	getMap(height, width, map);
 	readMap(height, width, map, mapGraph);
-	for (int i = 0; i < height; i++) {
+	for (int i = 0; i < height; i++) {//nie wczytują się wszystkie miasta - naprawić + przypadek SZCZECIN - WARSZAWA - dwie drogi o różnych długościach
 		delete[] map[i];
 	}
 	delete[] map;

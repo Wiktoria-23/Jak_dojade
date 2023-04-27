@@ -1,11 +1,12 @@
 #pragma once
-template <typename T>
-class List {
+template <typename T> class List {
 private:
 	T* head;
 	T* tail;
 public:
-	List() : head(nullptr), tail(nullptr) {
+	List() {
+		head = nullptr;
+		tail = nullptr;
 	}
 	T* getHead() {
 		return head;

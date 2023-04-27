@@ -5,7 +5,7 @@ Graph::Graph() : amount(NULL) {
 }
 cityNameNode* Graph::findCityByName(char* cityName) {
 	cityNameNode* currentCityName = cityNames->getHead();
-	while (currentCityName->getCityName() != cityName) {
+	while (*currentCityName->getCityName() != *cityName) {
 		currentCityName = currentCityName->getNextNode();
 	}
 	return currentCityName;

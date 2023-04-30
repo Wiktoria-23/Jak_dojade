@@ -10,6 +10,9 @@ char* adjacentCityNode::getCityName() {
 int adjacentCityNode::getDistance() {
 	return distance;
 }
+void adjacentCityNode::setDistance(int newDistance) {
+	distance = newDistance;
+}
 adjacentCityNode* adjacentCityNode::getNextNode() {
 	return next;
 }

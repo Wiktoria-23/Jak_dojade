@@ -25,14 +25,22 @@ bool cityNameNode::getState() {
 }
 adjacentCityNode* cityNameNode::findAdjacentCityByName(char* cityName) {
 	adjacentCityNode* tmp = adjacentCitiesList->getHead();
-	while (!compareText(cityName, tmp->getCityName())) {
+	while (tmp != nullptr && !compareText(cityName, tmp->getCityName())) {
 		tmp = tmp->getNextNode();
 	}
 	return tmp;
 }
 void cityNameNode::addNewAdjacentCity(int distance, char* adjacentCityName) {
-	adjacentCityNode* newDestination = new adjacentCityNode(distance, adjacentCityName);
-	adjacentCitiesList->addNewLastNode(newDestination);
+	if (findAdjacentCityByName(adjacentCityName) == nullptr) {
+		adjacentCityNode* newDestination = new adjacentCityNode(distance, adjacentCityName);
+		adjacentCitiesList->addNewLastNode(newDestination);
+	}
+	else {
+		adjacentCityNode* tmp = findAdjacentCityByName(adjacentCityName);
+		if (tmp->getDistance() > distance) {
+			tmp->setDistance(distance);
+		}
+	}
 }
 void cityNameNode::setNextNode(cityNameNode* newNext) {
 	next = newNext;

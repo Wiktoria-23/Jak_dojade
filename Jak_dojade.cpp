@@ -11,11 +11,6 @@
 #define SHOW_ROAD 1
 using namespace std;
 
-//struct nextCity {
-//	nextCity* adjacentCity;
-//	char* name;
-//};
-
 struct shortestRoadToCity {
 	char* cityName;
 	int distance;

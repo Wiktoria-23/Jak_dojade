@@ -26,7 +26,7 @@ enum direction {
 };
 
 void getMap(int height, int width, char** map);
-int readCityName(char* cityName, int x, char* mapLine);
+int readCityName(char* cityName, int x, char* mapLine, int width);
 char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph);
 void readMap(int height, int width, char** map, Graph* mapGraph);
 
@@ -42,13 +42,13 @@ void getMap(int height, int width, char** map) {
 	}
 }
 
-int readCityName(char* cityName, int x, char* mapLine) {
-	while (mapLine[x - 1] != NOTHING && mapLine[x -1] != ROAD) { //checks if previous character is '.'
+int readCityName(char* cityName, int x, char* mapLine, int width) {
+	while (x - 1 >= 0 && mapLine[x - 1] != NOTHING && mapLine[x -1] != ROAD) { //checks if previous character is '.'
 		x -= 1;
 	}
 	int i = 0;
 	int size = 0;
-	while (mapLine[x] != NOTHING && mapLine[x] != ROAD) {
+	while (mapLine[x] != NOTHING && mapLine[x] != ROAD && x < width) {
 		cityName[i] = mapLine[x];
 		size += 1;
 		x += 1;
@@ -61,28 +61,28 @@ char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGra
 	char* input = new char[BUFFER_SIZE];
 	int size = 0;
 	if (y - 1 >= 0 && map[y - 1][x] != NOTHING && map[y - 1][x] != ROAD) {
-		size = readCityName(input, x, map[y - 1]);
+		size = readCityName(input, x, map[y - 1], width);
 	}
 	else if (y + 1 < height && map[y + 1][x] != NOTHING && map[y + 1][x] != ROAD) {
-		size = readCityName(input, x, map[y + 1]);
+		size = readCityName(input, x, map[y + 1], width);
 	}
 	else if (x + 1 < width && map[y][x + 1] != NOTHING && map[y][x + 1] != ROAD) {
-		size = readCityName(input, x + 1, map[y]);
+		size = readCityName(input, x + 1, map[y], width);
 	}
 	else if (x - 1 >= 0 && map[y][x - 1] != NOTHING && map[y][x - 1] != ROAD) {
-		size = readCityName(input, x - 1, map[y]);
+		size = readCityName(input, x - 1, map[y], width);
 	}
 	else if (x + 1 < width && y + 1 < height && map[y + 1][x + 1] != NOTHING && map[y + 1][x + 1] != ROAD) {
-		size = readCityName(input, x + 1, map[y + 1]);
+		size = readCityName(input, x + 1, map[y + 1], width);
 	}
 	else if (y + 1 < height && x - 1 >= 0 && map[y + 1][x - 1] != NOTHING && map[y + 1][x - 1] != ROAD) {
-		size = readCityName(input, x - 1, map[y + 1]);
+		size = readCityName(input, x - 1, map[y + 1], width);
 	}
 	else if (x - 1 >= 0 && y - 1 >= 0 && map[y - 1][x - 1] != NOTHING && map[y - 1][x - 1] != ROAD) {
-		size = readCityName(input, x - 1, map[y - 1]);
+		size = readCityName(input, x - 1, map[y - 1], width);
 	}
 	else if (x + 1 < width && y - 1 >= 0 && map[y - 1][x + 1] != NOTHING && map[y - 1][x + 1] != ROAD) {
-		size = readCityName(input, x + 1, map[y - 1]);
+		size = readCityName(input, x + 1, map[y - 1], width);
 	}
 	char* cityName = new char[size + 1];
 	for (int i = 0; i < size; i++) {
@@ -319,6 +319,10 @@ void getFlights(Graph* mapGraph) {
 }
 
 void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGraph, int commandType) {
+	if (compareText(startingPoint, endingPoint)) {
+		cout << 0;
+		return;
+	}
 	int citiesAmount = mapGraph->getAmount();
 	shortestRoadToCity* startingCity = nullptr;
 	shortestRoadToCity* cities = new shortestRoadToCity[citiesAmount];

@@ -8,12 +8,18 @@
 #define BUFFER_SIZE 50
 #define TRUE 1
 #define FALSE 0
+#define SHOW_ROAD 1
 using namespace std;
+
+//struct nextCity {
+//	nextCity* adjacentCity;
+//	char* name;
+//};
 
 struct shortestRoadToCity {
 	char* cityName;
 	int distance;
-	List<adjacentCityNode>* road;
+	shortestRoadToCity* next;
 };
 
 enum direction {
@@ -317,8 +323,7 @@ void getFlights(Graph* mapGraph) {
 	}
 }
 
-int countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGraph) {
-
+void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGraph, int commandType) {
 	int citiesAmount = mapGraph->getAmount();
 	shortestRoadToCity* startingCity = nullptr;
 	shortestRoadToCity* cities = new shortestRoadToCity[citiesAmount];
@@ -330,7 +335,7 @@ int countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGrap
 		else {
 			cities[i].distance = INT_MAX;
 		}
-		cities[i].road = new List<adjacentCityNode>();
+		cities[i].next = nullptr;
 	}
 	cityNameNode* currentCity = mapGraph->findCityByName(startingPoint);
 	PriorityQueue* citiesToCheck = new PriorityQueue(currentCity, mapGraph);
@@ -348,6 +353,12 @@ int countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGrap
 				for (int i = 0; i < citiesAmount; i++) {
 					if (compareText(cities[i].cityName, currentAdjacentCity->getCityName()) && cities[i].distance > currentAdjacentCity->getDistance() + startingCity->distance) {
 						cities[i].distance = currentAdjacentCity->getDistance() + startingCity->distance;
+						if (startingCity->distance != 0) {
+							cities[i].next = startingCity;
+						}
+						else {
+							cities[i].next = nullptr;
+						}
 						break;
 					}//iteracja po wszystkich sąsiednich miastach
 				}
@@ -363,10 +374,24 @@ int countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGrap
 	} while (citiesToCheck->getFront() != nullptr);
 	for (int i = 0; i < citiesAmount; i++) {
 		if (compareText(cities[i].cityName, endingPoint)) {
-			return cities[i].distance;
+			cout << cities[i].distance;
+			if (commandType == SHOW_ROAD) {
+				for (int i = 0; i < citiesAmount; i++) {
+					if (compareText(endingPoint, cities[i].cityName)) {
+						shortestRoadToCity* tmp = &cities[i];
+						while (tmp->next != nullptr) {
+							cout << SPACE << tmp->next->cityName;
+							tmp = tmp->next;
+						}
+						break;
+					}
+				}
+			}
+			cout << endl;
+			return;
 		}
 	}
-	return 0;
+	return;
 }
 
 void getCommands(Graph* mapGraph) {
@@ -378,14 +403,7 @@ void getCommands(Graph* mapGraph) {
 		cityName1 = getCityName();
 		cityName2 = getCityName();
 		cin >> commandType;
-		if (commandType == 0) {
-			cout << countShortestDistance(cityName1, cityName2, mapGraph) << endl;
-			//return distance
-		}
-		else if (commandType == 1) {
-			cout << countShortestDistance(cityName1, cityName2, mapGraph) << endl;
-			//return distance and cities
-		}
+		countShortestDistance(cityName1, cityName2, mapGraph, commandType);
 	}
 
 }

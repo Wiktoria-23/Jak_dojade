@@ -11,4 +11,5 @@ bool compareText(char* textOne, char* textTwo) {
 	if (textOne[i] == END_OF_TEXT && textTwo[i] == END_OF_TEXT) {
 		return true;
 	}
+	return false;
 }

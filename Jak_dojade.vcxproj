@@ -131,12 +131,18 @@
     <ClCompile Include="cityNameNode.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Jak_dojade.cpp" />
+    <ClCompile Include="PriorityQueue.cpp" />
+    <ClCompile Include="QueueElement.cpp" />
+    <ClCompile Include="Operation_on_text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adjacentCityNode.h" />
     <ClInclude Include="cityNameNode.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="Operation_on_text.h" />
+    <ClInclude Include="PriorityQueue.h" />
+    <ClInclude Include="QueueElement.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,12 @@ adjacentCityNode::adjacentCityNode(int newDistance, char* newCityName) : distanc
 void adjacentCityNode::setNextNode(adjacentCityNode* newNext) {
 	next = newNext;
 }
+char* adjacentCityNode::getCityName() {
+	return cityName;
+}
+int adjacentCityNode::getDistance() {
+	return distance;
+}
 adjacentCityNode* adjacentCityNode::getNextNode() {
 	return next;
 }

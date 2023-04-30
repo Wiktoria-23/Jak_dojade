@@ -1,17 +1,20 @@
 ﻿#include <iostream>
 #include <stdio.h>
 #include "Graph.h"
-#define SPACE ' '
-#define NEW_LINE '\n'
-#define TAB '\t'
-#define CITY_SYMBOL '*'
-#define NOTHING '.'
-#define ROAD '#'
+#include "List.h"
+#include "adjacentCityNode.h"
+#include "PriorityQueue.h"
+#include "Operation_on_text.h"
 #define BUFFER_SIZE 50
-#define END_OF_TEXT '\0'
 #define TRUE 1
 #define FALSE 0
 using namespace std;
+
+struct shortestRoadToCity {
+	char* cityName;
+	int distance;
+	List<adjacentCityNode>* road;
+};
 
 enum direction {
 	UP,
@@ -299,7 +302,6 @@ void addFlight(Graph* mapGraph) {
 	int distance;
 	cin >> distance;
 	mapGraph->findCityByName(cityName1)->addNewAdjacentCity(distance, cityName2);
-	mapGraph->findCityByName(cityName2)->addNewAdjacentCity(distance, cityName1);
 }
 
 void getFlights(Graph* mapGraph) {
@@ -315,6 +317,79 @@ void getFlights(Graph* mapGraph) {
 	}
 }
 
+int countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGraph) {
+
+	int citiesAmount = mapGraph->getAmount();
+	shortestRoadToCity* startingCity = nullptr;
+	shortestRoadToCity* cities = new shortestRoadToCity[citiesAmount];
+	for (int i = 0; i < citiesAmount; i++) {
+		cities[i].cityName = mapGraph->findCityByNumber(i)->getCityName();
+		if (compareText(cities[i].cityName, startingPoint)) {
+			cities[i].distance = 0;
+		}
+		else {
+			cities[i].distance = INT_MAX;
+		}
+		cities[i].road = new List<adjacentCityNode>();
+	}
+	cityNameNode* currentCity = mapGraph->findCityByName(startingPoint);
+	PriorityQueue* citiesToCheck = new PriorityQueue(currentCity, mapGraph);
+	mapGraph->setAllCitiesUnvisited();
+	int currentDistance = 0;
+	do {
+		if (currentCity->getState() == false) {
+			adjacentCityNode* currentAdjacentCity = currentCity->getAdjacentCitiesList()->getHead();
+			for (int i = 0; i < citiesAmount; i++) {
+				if (compareText(cities[i].cityName, currentCity->getCityName())) {
+					startingCity = &cities[i];
+				}
+			}
+			while (currentAdjacentCity != nullptr) {
+				for (int i = 0; i < citiesAmount; i++) {
+					if (compareText(cities[i].cityName, currentAdjacentCity->getCityName()) && cities[i].distance > currentAdjacentCity->getDistance() + startingCity->distance) {
+						cities[i].distance = currentAdjacentCity->getDistance() + startingCity->distance;
+						break;
+					}//iteracja po wszystkich sąsiednich miastach
+				}
+				currentAdjacentCity = currentAdjacentCity->getNextNode();
+			}
+			citiesToCheck->addAllAdjacentCities(mapGraph, currentCity);
+			currentCity->setVisitedState(true);
+		}
+		citiesToCheck->removeFirstFromQueue();
+		if (citiesToCheck->getFront() != nullptr) {
+			currentCity = citiesToCheck->getFront()->getCity();
+		}
+	} while (citiesToCheck->getFront() != nullptr);
+	for (int i = 0; i < citiesAmount; i++) {
+		if (compareText(cities[i].cityName, endingPoint)) {
+			return cities[i].distance;
+		}
+	}
+	return 0;
+}
+
+void getCommands(Graph* mapGraph) {
+	int commandsNumber, commandType;
+	char* cityName1;
+	char* cityName2;
+	cin >> commandsNumber;
+	for (int i = 0; i < commandsNumber; i++) {
+		cityName1 = getCityName();
+		cityName2 = getCityName();
+		cin >> commandType;
+		if (commandType == 0) {
+			cout << countShortestDistance(cityName1, cityName2, mapGraph) << endl;
+			//return distance
+		}
+		else if (commandType == 1) {
+			cout << countShortestDistance(cityName1, cityName2, mapGraph) << endl;
+			//return distance and cities
+		}
+	}
+
+}
+
 int main() {
 	int width, height;
 	cin >> width;
@@ -327,6 +402,7 @@ int main() {
 	getMap(height, width, map);
 	readMap(height, width, map, mapGraph);
 	getFlights(mapGraph);
+	getCommands(mapGraph);
 	for (int i = 0; i < height; i++) {
 		delete[] map[i];
 	}

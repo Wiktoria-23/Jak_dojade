@@ -5,10 +5,41 @@ Graph::Graph() : amount(NULL) {
 }
 cityNameNode* Graph::findCityByName(char* cityName) {
 	cityNameNode* currentCityName = cityNames->getHead();
-	while (*currentCityName->getCityName() != *cityName) {
+	while (true) {
+		int i = 0;
+		while (currentCityName->getCityName()[i] != '\0') {
+			if (currentCityName->getCityName()[i] != cityName[i]) {
+				break;
+			}
+			i++;
+		}
+		if (currentCityName->getCityName()[i] == '\0' && cityName[i] == '\0') {
+			return currentCityName;
+		}
 		currentCityName = currentCityName->getNextNode();
 	}
-	return currentCityName;
+}
+int Graph::getAmount() {
+	return amount;
+}
+cityNameNode* Graph::findCityByNumber(int number) {
+	int counter = 0;
+	cityNameNode* tmp = cityNames->getHead();
+	while (number != counter) {
+		tmp = tmp->getNextNode();
+		counter += 1;
+	}
+	return tmp;
+}
+List<cityNameNode>* Graph::getCityNames() {
+	return cityNames;
+}
+void Graph::setAllCitiesUnvisited() {
+	cityNameNode* tmp = getCityNames()->getHead();
+	while (tmp != nullptr) {
+		tmp->setVisitedState(false);
+		tmp = tmp->getNextNode();
+	}
 }
 cityNameNode* Graph::findCityByCoordinates(int xPosition, int yPosition) {
 	cityNameNode* currentCityName = cityNames->getHead();

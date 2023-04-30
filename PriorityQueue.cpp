@@ -1,6 +1,6 @@
 #include "PriorityQueue.h"
 PriorityQueue::PriorityQueue(cityNameNode* startingCity, Graph* mapGraph) {
-	front = nullptr;
+	front = new QueueElement(startingCity);
 	rear = nullptr;
 }
 void PriorityQueue::addToQueue(QueueElement* newElement) {

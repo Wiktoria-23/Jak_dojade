@@ -7,13 +7,13 @@ cityNameNode* Graph::findCityByName(char* cityName) {
 	cityNameNode* currentCityName = cityNames->getHead();
 	while (true) {
 		int i = 0;
-		while (currentCityName->getCityName()[i] != '\0') {
+		while (currentCityName->getCityName()[i] != END_OF_TEXT) {
 			if (currentCityName->getCityName()[i] != cityName[i]) {
 				break;
 			}
 			i++;
 		}
-		if (currentCityName->getCityName()[i] == '\0' && cityName[i] == '\0') {
+		if (currentCityName->getCityName()[i] == END_OF_TEXT && cityName[i] == END_OF_TEXT) {
 			return currentCityName;
 		}
 		currentCityName = currentCityName->getNextNode();

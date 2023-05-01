@@ -1,17 +1,17 @@
 #include "cityNameNode.h"
-cityNameNode::cityNameNode(char* newCityName, int xPosition, int yPosition) : cityName(newCityName), next(nullptr), x(xPosition), y(yPosition) {
+cityNameNode::cityNameNode(char* newCityName, int xPosition, int yPosition) : next(nullptr), visited(false), cityName(newCityName), x(xPosition), y(yPosition) {
 	adjacentCitiesList = new List<adjacentCityNode>();
 }
 cityNameNode* cityNameNode::getNextNode() {
 	return next;
 }
-char* cityNameNode::getCityName() {
+char* cityNameNode::getCityName() const {
 	return cityName;
 }
-int cityNameNode::getX() {
+int cityNameNode::getX() const {
 	return x;
 }
-int cityNameNode::getY() {
+int cityNameNode::getY() const {
 	return y;
 }
 List<adjacentCityNode>* cityNameNode::getAdjacentCitiesList() {
@@ -20,7 +20,7 @@ List<adjacentCityNode>* cityNameNode::getAdjacentCitiesList() {
 void cityNameNode::setVisitedState(bool state) {
 	visited = state;
 }
-bool cityNameNode::getState() {
+bool cityNameNode::getState() const {
 	return visited;
 }
 adjacentCityNode* cityNameNode::findAdjacentCityByName(char* cityName) {

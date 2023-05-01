@@ -7,8 +7,7 @@ private:
 	QueueElement* front;
 	QueueElement* rear;
 public:
-	PriorityQueue(cityNameNode* startingCity, Graph* mapGraph);
-	void addToQueue(QueueElement* newElement);
+	PriorityQueue(cityNameNode* startingCity);
 	void addToQueueFront(QueueElement* newElement);
 	void removeFirstFromQueue();
 	void addAllAdjacentCities(Graph* mapGraph, cityNameNode* startingCity);

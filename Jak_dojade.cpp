@@ -94,14 +94,6 @@ char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGra
 	return cityName;
 }
 
-int findCityNameLength(char* cityName) {
-	int counter = 0;
-	while (cityName[counter] != END_OF_TEXT) {
-		counter += 1;
-	}
-	return counter;
-}
-
 void addRoad(Graph* mapGraph, char* cityName, int cityX, int cityY, int distance) {
 	cityNameNode* destination = mapGraph->findCityByCoordinates(cityX, cityY);
 	mapGraph->findCityByName(cityName)->addNewAdjacentCity(distance, destination->getCityName());
@@ -364,7 +356,7 @@ void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGra
 		cities[i].next = nullptr;
 	}
 	cityNameNode* currentCity = mapGraph->findCityByName(startingPoint);
-	PriorityQueue* citiesToCheck = new PriorityQueue(currentCity, mapGraph);
+	PriorityQueue* citiesToCheck = new PriorityQueue(currentCity);
 	mapGraph->setAllCitiesUnvisited();
 	do {
 		if (currentCity->getState() == false) {
@@ -405,9 +397,9 @@ void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGra
 			cout << cities[i].distance;
 			if (commandType == SHOW_ROAD) {
 				shortestRoadToCity* endingCity = nullptr;
-				for (int i = 0; i < citiesAmount; i++) {
-					if (compareText(cities[i].cityName, endingPoint)) {
-						endingCity = &cities[i];
+				for (int j = 0; j < citiesAmount; j++) {
+					if (compareText(cities[j].cityName, endingPoint)) {
+						endingCity = &cities[j];
 					}
 				}
 				printRoad(endingCity, endingPoint);
@@ -421,10 +413,10 @@ void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGra
 
 void getCommands(Graph* mapGraph) {
 	int commandsNumber, commandType;
-	char* cityName1;
-	char* cityName2;
 	cin >> commandsNumber;
 	for (int i = 0; i < commandsNumber; i++) {
+		char* cityName1;
+		char* cityName2;
 		cityName1 = getCityName();
 		cityName2 = getCityName();
 		cin >> commandType;
@@ -438,7 +430,7 @@ int main() {
 	cin >> width;
 	cin >> height;
 	Graph* mapGraph = new Graph();
-	char** map = new char*[height];
+	char** map = new char* [height];
 	for (int i = 0; i < height; i++) {
 		map[i] = new char[width];
 	}
@@ -453,6 +445,10 @@ int main() {
 	readMap(height, width, map, mapGraph, checkedRoads);
 	getFlights(mapGraph);
 	getCommands(mapGraph);
+	for (int i = 0; i < height; i++) {
+		delete[] checkedRoads[i];
+	}
+	delete[] checkedRoads;
 	for (int i = 0; i < height; i++) {
 		delete[] map[i];
 	}

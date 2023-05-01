@@ -6,10 +6,10 @@ private:
 	char* cityName;
 public:
 	adjacentCityNode(int newDistance, char* newCityName);
-	char* getCityName();
-	int getDistance();
+	char* getCityName() const;
+	int getDistance() const;
 	void setDistance(int newDistance);
-	void setNextNode(adjacentCityNode* next);
+	void setNextNode(adjacentCityNode* newNext);
 	adjacentCityNode* getNextNode();
 	~adjacentCityNode();
 };

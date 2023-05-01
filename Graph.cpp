@@ -19,7 +19,7 @@ cityNameNode* Graph::findCityByName(char* cityName) {
 		currentCityName = currentCityName->getNextNode();
 	}
 }
-int Graph::getAmount() {
+int Graph::getAmount() const {
 	return amount;
 }
 cityNameNode* Graph::findCityByNumber(int number) {

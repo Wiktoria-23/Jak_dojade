@@ -12,14 +12,14 @@ private:
 	int y;
 public:
 	cityNameNode(char* newCityName, int xPosition, int yPosition);
-	char* getCityName();
-	int getX();
-	int getY();
+	char* getCityName() const;
+	int getX() const;
+	int getY() const;
 	void setNextNode(cityNameNode* newNext);
 	List<adjacentCityNode>* getAdjacentCitiesList();
-	adjacentCityNode* findAdjacentCityByName(char* name);
+	adjacentCityNode* findAdjacentCityByName(char* cityName);
 	void setVisitedState(bool state);
-	bool getState();
+	bool getState() const;
 	void addNewAdjacentCity(int distance, char* adjacentCityName);
 	cityNameNode* getNextNode();
 	~cityNameNode();

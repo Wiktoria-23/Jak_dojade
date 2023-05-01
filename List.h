@@ -24,6 +24,24 @@ public:
 			tail = tail->getNextNode();
 		}
 	}
+	void deleteElement(T* element) {
+		T* tmp = head;
+		T* previous = nullptr;
+		while (tmp != element) {
+			previous = tmp;
+			tmp = tmp->getNextNode();
+		}
+		if (tmp == head) {
+			head = head->getNextNode();
+		}
+		if (tmp == tail) {
+			tail = previous;
+		}
+		if (previous != nullptr) {
+			previous->setNextNode(tmp->getNextNode());
+		}
+		delete tmp;
+	}
 	~List() {
 
 	}

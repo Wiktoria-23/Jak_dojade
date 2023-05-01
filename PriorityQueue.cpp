@@ -1,6 +1,6 @@
 #include "PriorityQueue.h"
 PriorityQueue::PriorityQueue(cityNameNode* startingCity) {
-	front = new QueueElement(startingCity);
+	front = new QueueElement(startingCity, 0);
 	rear = nullptr;
 }
 void PriorityQueue::addToQueueFront(QueueElement* newElement) {
@@ -8,20 +8,42 @@ void PriorityQueue::addToQueueFront(QueueElement* newElement) {
 	front = newElement;
 	newElement->setNextInQueue(previousFront);
 }
+void PriorityQueue::addToQueue(QueueElement* newElement) {
+	QueueElement* tmp = front;
+	QueueElement* previous = nullptr;
+	while (tmp != nullptr && tmp->getDistance() < newElement->getDistance()) {
+		previous = tmp;
+		tmp = tmp->getNextInQueue();
+	}
+	if (tmp == nullptr) {
+		if (tmp == front) {
+			front = newElement;
+		}
+		else {
+			previous->setNextInQueue(newElement);
+		}
+	}
+	if (previous != nullptr) {
+		previous->setNextInQueue(newElement);
+	}
+	else {
+		front = newElement;
+	}
+	newElement->setNextInQueue(tmp);
+
+}
 void PriorityQueue::removeFirstFromQueue() {
 	QueueElement* tmp = front;
 	front = front->getNextInQueue();
 	delete tmp;
 }
-void PriorityQueue::addAllAdjacentCities(Graph* mapGraph, cityNameNode* startingCity) {
+void PriorityQueue::addAllAdjacentCities(Graph* mapGraph, cityNameNode* startingCity, int distanceToCity) {
 	adjacentCityNode* nextCity = startingCity->getAdjacentCitiesList()->getHead();
 	while (nextCity != nullptr) {
-		QueueElement* nextAdjacentCity = new QueueElement(mapGraph->findCityByName(nextCity->getCityName()));
-		if (mapGraph->findCityByName(nextAdjacentCity->getCity()->getCityName())->getState() == false) {
-			addToQueueFront(nextAdjacentCity);
-		}
+		QueueElement* nextAdjacentCity = new QueueElement(mapGraph->findCityByName(nextCity->getCityName()), nextCity->getDistance() + distanceToCity);
+		addToQueue(nextAdjacentCity);
 		nextCity = nextCity->getNextNode();
-	}
+	}//dodaæ poprawnie odleg³oœci
 }
 QueueElement* PriorityQueue::getFront() {
 	return front;

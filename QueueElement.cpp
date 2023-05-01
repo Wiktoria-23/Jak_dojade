@@ -1,6 +1,6 @@
 #include "QueueElement.h"
 
-QueueElement::QueueElement(cityNameNode* city) : nextInQueue(nullptr), city(city) {
+QueueElement::QueueElement(cityNameNode* city, int distance) : nextInQueue(nullptr), city(city), distance(distance) {
 
 }
 cityNameNode* QueueElement::getCity() {
@@ -8,6 +8,9 @@ cityNameNode* QueueElement::getCity() {
 }
 QueueElement* QueueElement::getNextInQueue() {
 	return nextInQueue;
+}
+int QueueElement::getDistance() {
+	return distance;
 }
 void QueueElement::setNextInQueue(QueueElement* newNext) {
 	nextInQueue = newNext;

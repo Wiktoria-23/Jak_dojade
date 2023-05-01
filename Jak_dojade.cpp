@@ -105,40 +105,48 @@ int findCityNameLength(char* cityName) {
 void addRoad(Graph* mapGraph, char* cityName, int cityX, int cityY, int distance) {
 	cityNameNode* destination = mapGraph->findCityByCoordinates(cityX, cityY);
 	mapGraph->findCityByName(cityName)->addNewAdjacentCity(distance, destination->getCityName());
+	mapGraph->findCityByName(destination->getCityName())->addNewAdjacentCity(distance, cityName);
 }
 
-void checkRoads(int x, int y, char** map, direction moveDirection, Graph* mapGraph, char* cityName, int width, int height, int lengthCounter);
+void checkRoads(int x, int y, char** map, direction moveDirection, Graph* mapGraph, char* cityName, int width, int height, int lengthCounter, bool** checkedRoads);
 
-bool checkCity(int x, int y, char** map, Graph* mapGraph, char* cityName, int width, int height, direction moveDirection, int lengthCounter) {
+bool checkCity(int x, int y, char** map, Graph* mapGraph, char* cityName, int width, int height, direction moveDirection, int lengthCounter, bool** checkedRoads) {
 	int addedCities = 0;
 	if (map[y][x] == CITY_SYMBOL) {
+		checkedRoads[y][x] = true;
 		addRoad(mapGraph, cityName, x, y, lengthCounter);
 		addedCities += 1;
 	}
 	if (y - 1 >= 0 && map[y - 1][x] == CITY_SYMBOL && moveDirection != DOWN) {
+		checkedRoads[y - 1][x] = true;
 		addRoad(mapGraph, cityName, x, y - 1, lengthCounter + 1);
 		addedCities += 1;
 	}
 	if (y + 1 < height && map[y + 1][x] == CITY_SYMBOL && moveDirection != UP) {
+		checkedRoads[y + 1][x] = true;
 		addRoad(mapGraph, cityName, x, y + 1, lengthCounter + 1);
 		addedCities += 1;
 	}
 	if (x + 1 < width && map[y][x + 1] == CITY_SYMBOL && moveDirection != LEFT) {
+		checkedRoads[y][x + 1] = true;
 		addRoad(mapGraph, cityName, x + 1, y, lengthCounter + 1);
 		addedCities += 1;
 	}
 	if (x - 1 >= 0 && map[y][x - 1] == CITY_SYMBOL && moveDirection != RIGHT) {
+		checkedRoads[y][x - 1] = true;
 		addRoad(mapGraph, cityName, x - 1, y, lengthCounter + 1);
 		addedCities += 1;
 	}
 	if (addedCities > 0) {
+
 		return true;
 	}
 	return false;
 	
 }
 
-void readRoad(int x, int y, char** map, direction moveDirection, Graph* mapGraph, char* cityName, int width, int height, int lengthCounter) {
+void readRoad(int x, int y, char** map, direction moveDirection, Graph* mapGraph, char* cityName, int width, int height, int lengthCounter, bool** checkedRoads) {
+	checkedRoads[y][x] = true;
 	lengthCounter += 1;
 	while (TRUE) {
 		int roadsCounter = 0;
@@ -155,93 +163,109 @@ void readRoad(int x, int y, char** map, direction moveDirection, Graph* mapGraph
 			roadsCounter += 1;
 		}
 		if (roadsCounter > 2) {
-			checkRoads(x, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter);
+			checkRoads(x, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 			break;
 		}
 		if (moveDirection == UP && y - 1 >= 0 && map[y - 1][x] == ROAD) {
 			y -= 1;
+			checkedRoads[y][x] = true;
 			lengthCounter += 1;
 		}
 		else if (moveDirection == DOWN && y + 1 < height && map[y + 1][x] == ROAD) {
 			y += 1;
+			checkedRoads[y][x] = true;
 			lengthCounter += 1;
 		}
 		else if (moveDirection == RIGHT && x + 1 < width && map[y][x + 1] == ROAD) {
 			x += 1;
+			checkedRoads[y][x] = true;
 			lengthCounter += 1;
 		}
 		else if (moveDirection == LEFT && x - 1 >= 0 && map[y][x - 1] == ROAD) {
 			x -= 1;
+			checkedRoads[y][x] = true;
 			lengthCounter += 1;
 		}
 		else {
-			checkCity(x, y, map, mapGraph, cityName, width, height, moveDirection, lengthCounter);
-			checkRoads(x, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter);
+			checkCity(x, y, map, mapGraph, cityName, width, height, moveDirection, lengthCounter, checkedRoads);
+			checkRoads(x, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 			break;
 		}
-		checkCity(x, y, map, mapGraph, cityName, width, height, moveDirection, lengthCounter);
+		checkCity(x, y, map, mapGraph, cityName, width, height, moveDirection, lengthCounter, checkedRoads);
 	}
 }
 
-void checkRoads(int x, int y, char** map, direction moveDirection, Graph* mapGraph, char* cityName, int width, int height, int lengthCounter) {
+void checkRoads(int x, int y, char** map, direction moveDirection, Graph* mapGraph, char* cityName, int width, int height, int lengthCounter, bool** checkedRoads) {
 	int roadsCounter = 0;
-	checkCity(x, y, map, mapGraph, cityName, width, height, moveDirection, lengthCounter);
+	checkCity(x, y, map, mapGraph, cityName, width, height, moveDirection, lengthCounter, checkedRoads);
 	if (y - 1 >= 0 && map[y - 1][x] == ROAD) {
+		if (moveDirection == UP) {
+			readRoad(x, y - 1, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
+		}
 		roadsCounter += 1;
 	}
 	if (y + 1 < height && map[y + 1][x] == ROAD) {
+		if (moveDirection == DOWN) {
+			readRoad(x, y + 1, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
+		}
 		roadsCounter += 1;
 	}
 	if (x - 1 >= 0 && map[y][x - 1] == ROAD) {
+		if (moveDirection == LEFT) {
+			readRoad(x - 1, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
+		}
 		roadsCounter += 1;
 	}
 	if (x + 1 < width && map[y][x + 1] == ROAD) {
+		if (moveDirection == RIGHT) {
+			readRoad(x + 1, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
+		}
 		roadsCounter += 1;
 	}
 	if (roadsCounter > 2 || moveDirection == NONE) {
 		direction newMoveDirection;
-		if (y - 1 >= 0 && map[y - 1][x] == ROAD && moveDirection != DOWN) {
+		if (y - 1 >= 0 && map[y - 1][x] == ROAD && moveDirection != DOWN && checkedRoads[y - 1][x] == false) {
 			newMoveDirection = UP;
-			readRoad(x, y - 1, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x, y - 1, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
-		if (y + 1 < height && map[y + 1][x] == ROAD && moveDirection != UP) {
+		if (y + 1 < height && map[y + 1][x] == ROAD && moveDirection != UP && checkedRoads[y + 1][x] == false) {
 			newMoveDirection = DOWN;
-			readRoad(x, y + 1, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x, y + 1, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
-		if (x - 1 >= 0 && map[y][x - 1] == ROAD && moveDirection != RIGHT) {
+		if (x - 1 >= 0 && map[y][x - 1] == ROAD && moveDirection != RIGHT && checkedRoads[y][x - 1] == false) {
 			newMoveDirection = LEFT;
-			readRoad(x - 1, y, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x - 1, y, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
-		if (x + 1 < width && map[y][x + 1] == ROAD && moveDirection != LEFT) {
+		if (x + 1 < width && map[y][x + 1] == ROAD && moveDirection != LEFT && checkedRoads[y][x + 1] == false) {
 			newMoveDirection = RIGHT;
-			readRoad(x + 1, y, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x + 1, y, map, newMoveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
 	}
 	else {//change of direction of the road 
 		if (y - 1 >= 0 && map[y - 1][x] == ROAD && moveDirection != DOWN) {
 			moveDirection = UP;
-			readRoad(x, y - 1, map, moveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x, y - 1, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
 		else if (y + 1 < height && map[y + 1][x] == ROAD && moveDirection != UP) {
 			moveDirection = DOWN;
-			readRoad(x, y + 1, map, moveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x, y + 1, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
 		else if (x - 1 >= 0 && map[y][x - 1] == ROAD && moveDirection != RIGHT) {
 			moveDirection = LEFT;
-			readRoad(x - 1, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x - 1, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
 		else if (x + 1 < width && map[y][x + 1] == ROAD && moveDirection != LEFT) {
 			moveDirection = RIGHT;
-			readRoad(x + 1, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter);
+			readRoad(x + 1, y, map, moveDirection, mapGraph, cityName, width, height, lengthCounter, checkedRoads);
 		}
 	}
 }
 
-void readMap(int height, int width, char** map, Graph* mapGraph) {
+void readMap(int height, int width, char** map, Graph* mapGraph, bool** checkedRoads) {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
-				char* cityName = addCityName(x, y, map, width, height, mapGraph);
+				addCityName(x, y, map, width, height, mapGraph);
 			}
 		}
 	}
@@ -249,7 +273,24 @@ void readMap(int height, int width, char** map, Graph* mapGraph) {
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
 				char* cityName = mapGraph->findCityByCoordinates(x, y)->getCityName();
-				checkRoads(x, y, map, NONE, mapGraph, cityName, width, height, 0);
+				checkRoads(x, y, map, NONE, mapGraph, cityName, width, height, 0, checkedRoads);
+				/*for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
+						if (checkedRoads[y][x] == true) {
+							cout << "*";
+						}
+						else {
+							cout << " ";
+						}
+					}
+					cout << endl;
+				}
+				cout << endl;*/
+				for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
+						checkedRoads[y][x] = false;
+					}
+				}
 			}
 		}
 	}
@@ -278,7 +319,7 @@ char* getCityName() {
 void addFlight(Graph* mapGraph) {
 	char* cityName1;
 	char* cityName2;
-	char input = getchar();
+	getchar();
 	cityName1 = getCityName();
 	cityName2 = getCityName();
 	int distance;
@@ -401,8 +442,15 @@ int main() {
 	for (int i = 0; i < height; i++) {
 		map[i] = new char[width];
 	}
+	bool** checkedRoads = new bool* [height];
+	for (int y = 0; y < height; y++) {
+		checkedRoads[y] = new bool[width];
+		for (int x = 0; x < width; x++) {
+			checkedRoads[y][x] = false;
+		}
+	}
 	getMap(height, width, map);
-	readMap(height, width, map, mapGraph);
+	readMap(height, width, map, mapGraph, checkedRoads);
 	getFlights(mapGraph);
 	getCommands(mapGraph);
 	for (int i = 0; i < height; i++) {

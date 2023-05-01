@@ -1,12 +1,6 @@
 #include "PriorityQueue.h"
 PriorityQueue::PriorityQueue(cityNameNode* startingCity) {
 	front = new QueueElement(startingCity, 0);
-	rear = nullptr;
-}
-void PriorityQueue::addToQueueFront(QueueElement* newElement) {
-	QueueElement* previousFront = front;
-	front = newElement;
-	newElement->setNextInQueue(previousFront);
 }
 void PriorityQueue::addToQueue(QueueElement* newElement) {
 	QueueElement* tmp = front;
@@ -43,7 +37,7 @@ void PriorityQueue::addAllAdjacentCities(Graph* mapGraph, cityNameNode* starting
 		QueueElement* nextAdjacentCity = new QueueElement(mapGraph->findCityByName(nextCity->getCityName()), nextCity->getDistance() + distanceToCity);
 		addToQueue(nextAdjacentCity);
 		nextCity = nextCity->getNextNode();
-	}//dodaæ poprawnie odleg³oœci
+	}
 }
 QueueElement* PriorityQueue::getFront() {
 	return front;

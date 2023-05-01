@@ -27,11 +27,6 @@ enum direction {
 	NONE
 };
 
-void getMap(int height, int width, char** map);
-int readCityName(char* cityName, int x, char* mapLine, int width);
-char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGraph);
-void readMap(int height, int width, char** map, Graph* mapGraph);
-
 void getMap(int height, int width, char** map) {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width;) {
@@ -173,9 +168,9 @@ void readMap(int height, int width, char** map, Graph* mapGraph, bool** checkedR
 				checkedRoads[y][x] = true;
 				toSearch->addNewLastNode(newRoad);
 				checkRoads(toSearch, map, checkedRoads, mapGraph, cityName, width, height);
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						checkedRoads[y][x] = false;
+				for (int y1 = 0; y1 < height; y1++) {
+					for (int x1 = 0; x1 < width; x1++) {
+						checkedRoads[y1][x1] = false;
 					}
 				}
 			}
@@ -309,57 +304,6 @@ void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGra
 			return;
 		}
 	}
-	//do {
-	//	if (currentCity->getState() == false) {
-	//		adjacentCityNode* currentAdjacentCity = currentCity->getAdjacentCitiesList()->getHead();
-	//		for (int i = 0; i < citiesAmount; i++) {
-	//			if (compareText(cities[i].cityName, currentCity->getCityName())) {
-	//				startingCity = &cities[i];
-	//			}
-	//		}
-	//		while (currentAdjacentCity != nullptr) {
-	//			for (int i = 0; i < citiesAmount; i++) {
-	//				if (compareText(cities[i].cityName, currentAdjacentCity->getCityName()) && cities[i].distance > currentAdjacentCity->getDistance() + startingCity->distance) {
-	//					cities[i].distance = currentAdjacentCity->getDistance() + startingCity->distance;
-	//					if (startingCity->distance != 0) {
-	//						cities[i].next = startingCity;
-	//					}
-	//					else {
-	//						cities[i].next = nullptr;
-	//					}
-	//					break;
-	//				}//iteracja po wszystkich sąsiednich miastach
-	//			}
-	//			currentAdjacentCity = currentAdjacentCity->getNextNode();
-	//		}
-	//		citiesToCheck->removeFirstFromQueue();
-	//		citiesToCheck->addAllAdjacentCities(mapGraph, currentCity);
-	//		currentCity->setVisitedState(true);
-	//	}
-	//	else {
-	//		citiesToCheck->removeFirstFromQueue();
-	//	}
-	//	if (citiesToCheck->getFront() != nullptr) {
-	//		currentCity = citiesToCheck->getFront()->getCity();
-	//	}
-	//} while (citiesToCheck->getFront() != nullptr);
-	//for (int i = 0; i < citiesAmount; i++) {
-	//	if (compareText(cities[i].cityName, endingPoint)) {
-	//		cout << cities[i].distance;
-	//		if (commandType == SHOW_ROAD) {
-	//			shortestRoadToCity* endingCity = nullptr;
-	//			for (int j = 0; j < citiesAmount; j++) {
-	//				if (compareText(cities[j].cityName, endingPoint)) {
-	//					endingCity = &cities[j];
-	//				}
-	//			}
-	//			printRoad(endingCity, endingPoint);
-	//		}
-	//		cout << endl;
-	//		return;
-	//	}
-	//}
-	//return;
 }
 
 void getCommands(Graph* mapGraph) {

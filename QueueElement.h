@@ -8,9 +8,9 @@ private:
 	int distance;
 public:
 	QueueElement(cityNameNode* city, int distance);
-	cityNameNode* getCity();
-	QueueElement* getNextInQueue();
-	int getDistance();
+	cityNameNode* getCity() const;
+	QueueElement* getNextInQueue() const;
+	int getDistance() const;
 	void setNextInQueue(QueueElement* newNext);
 	~QueueElement();
 };

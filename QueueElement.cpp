@@ -3,13 +3,13 @@
 QueueElement::QueueElement(cityNameNode* city, int distance) : nextInQueue(nullptr), city(city), distance(distance) {
 
 }
-cityNameNode* QueueElement::getCity() {
+cityNameNode* QueueElement::getCity() const {
 	return city;
 }
-QueueElement* QueueElement::getNextInQueue() {
+QueueElement* QueueElement::getNextInQueue() const {
 	return nextInQueue;
 }
-int QueueElement::getDistance() {
+int QueueElement::getDistance() const {
 	return distance;
 }
 void QueueElement::setNextInQueue(QueueElement* newNext) {

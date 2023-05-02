@@ -159,15 +159,16 @@ void readMap(int height, int width, char** map, Graph* mapGraph, bool** checkedR
 			}
 		}
 	}
+	cityNameNode* currentCity = mapGraph->getCityNames()->getHead();
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
-				char* cityName = mapGraph->findCityByCoordinates(x, y)->getCityName();
 				List<SearchingNode>* toSearch = new List<SearchingNode>();
 				SearchingNode* newRoad = new SearchingNode(x, y, 0);
 				checkedRoads[y][x] = true;
 				toSearch->addNewLastNode(newRoad);
-				checkRoads(toSearch, map, checkedRoads, mapGraph, cityName, width, height);
+				checkRoads(toSearch, map, checkedRoads, mapGraph, currentCity->getCityName(), width, height);
+				currentCity = currentCity->getNextNode();
 				for (int y1 = 0; y1 < height; y1++) {
 					for (int x1 = 0; x1 < width; x1++) {
 						checkedRoads[y1][x1] = false;

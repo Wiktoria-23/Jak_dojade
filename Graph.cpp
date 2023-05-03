@@ -57,5 +57,5 @@ void Graph::incrementAmount() {
 	amount += 1;
 }
 Graph::~Graph() {
-
+	delete cityNames;
 }

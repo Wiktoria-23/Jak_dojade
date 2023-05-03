@@ -16,4 +16,6 @@ void QueueElement::setNextInQueue(QueueElement* newNext) {
 	nextInQueue = newNext;
 }
 QueueElement::~QueueElement() {
+	nextInQueue = nullptr;
+	city = nullptr;
 }

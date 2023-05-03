@@ -46,5 +46,10 @@ void cityNameNode::setNextNode(cityNameNode* newNext) {
 	next = newNext;
 }
 cityNameNode::~cityNameNode() {
-
+	if (cityName != nullptr) {
+		delete[] cityName;
+		cityName = nullptr;
+	}
+	delete adjacentCitiesList;
+	next = nullptr;
 }

@@ -43,5 +43,13 @@ QueueElement* PriorityQueue::getFront() {
 	return front;
 }
 PriorityQueue::~PriorityQueue() {
-
+	if (front != nullptr) {
+		QueueElement* tmp = front;
+		QueueElement* next = nullptr;
+		while (tmp != nullptr) {
+			next = tmp->getNextInQueue();
+			delete tmp;
+			tmp = next;
+		}
+	}
 }

@@ -43,7 +43,13 @@ public:
 		delete tmp;
 	}
 	~List() {
-
+		T* tmp = head;
+		T* next = nullptr;
+		while (tmp != nullptr) {
+			next = tmp->getNextNode();
+			delete tmp;
+			tmp = next;
+		}
 	}
 };
 

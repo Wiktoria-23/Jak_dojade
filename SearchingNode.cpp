@@ -19,5 +19,5 @@ SearchingNode* SearchingNode::getNextNode() {
 	return next;
 }
 SearchingNode::~SearchingNode() {
-
+	next = nullptr;
 }

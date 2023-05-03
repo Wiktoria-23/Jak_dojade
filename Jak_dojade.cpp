@@ -163,15 +163,18 @@ void readMap(int height, int width, char** map, Graph* mapGraph, bool** checkedR
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
-				List<SearchingNode>* toSearch = new List<SearchingNode>();
-				SearchingNode* newRoad = new SearchingNode(x, y, 0);
-				checkedRoads[y][x] = true;
-				toSearch->addNewLastNode(newRoad);
-				checkRoads(toSearch, map, checkedRoads, mapGraph, currentCity->getCityName(), width, height);
-				currentCity = currentCity->getNextNode();
-				for (int y1 = 0; y1 < height; y1++) {
-					for (int x1 = 0; x1 < width; x1++) {
-						checkedRoads[y1][x1] = false;
+				int counter = 0;
+				if ((y - 1 >= 0 && (map[y - 1][x] == ROAD || map[y - 1][x] == CITY_SYMBOL)) || (y + 1 < height && (map[y + 1][x] == ROAD || map[y + 1][x] == CITY_SYMBOL)) || (x - 1 >= 0 && (map[y][x - 1] == ROAD || map[y][x - 1] == CITY_SYMBOL)) || (x + 1 < width && (map[y][x + 1] == ROAD || map[y][x + 1] == CITY_SYMBOL))) {
+					List<SearchingNode>* toSearch = new List<SearchingNode>();
+					SearchingNode* newRoad = new SearchingNode(x, y, 0);
+					checkedRoads[y][x] = true;
+					toSearch->addNewLastNode(newRoad);
+					checkRoads(toSearch, map, checkedRoads, mapGraph, currentCity->getCityName(), width, height);
+					currentCity = currentCity->getNextNode();
+					for (int y1 = 0; y1 < height; y1++) {
+						for (int x1 = 0; x1 < width; x1++) {
+							checkedRoads[y1][x1] = false;
+						}
 					}
 				}
 			}
@@ -274,7 +277,7 @@ void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGra
 					startingCity = &cities[i];
 				}
 			}
-			cityNameNode* currentCity = citiesToCheck->getFront()->getCity();
+			currentCity = citiesToCheck->getFront()->getCity();
 			checkDistances(currentCity, mapGraph, cities, startingCity);
 		}
 		if (citiesToCheck->getFront() != nullptr) {
@@ -305,6 +308,7 @@ void countShortestDistance(char* startingPoint, char* endingPoint, Graph* mapGra
 			return;
 		}
 	}
+	delete[] cities;
 }
 
 void getCommands(Graph* mapGraph) {
@@ -349,5 +353,6 @@ int main() {
 		delete[] map[i];
 	}
 	delete[] map;
+	delete mapGraph;
 	return 0;
 }

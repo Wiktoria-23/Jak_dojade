@@ -17,5 +17,5 @@ adjacentCityNode* adjacentCityNode::getNextNode() {
 	return next;
 }
 adjacentCityNode::~adjacentCityNode() {
-
+	next = nullptr;
 }

@@ -2,6 +2,7 @@
 #include "List.h"
 #include "adjacentCityNode.h"
 #include "Operation_on_text.h"
+
 class cityNameNode {
 private:
 	List<adjacentCityNode>* adjacentCitiesList;

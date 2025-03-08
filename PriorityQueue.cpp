@@ -34,7 +34,9 @@ void PriorityQueue::removeFirstFromQueue() {
 void PriorityQueue::addAllAdjacentCities(Graph* mapGraph, cityNameNode* startingCity, int distanceToCity) {
 	adjacentCityNode* nextCity = startingCity->getAdjacentCitiesList()->getHead();
 	while (nextCity != nullptr) {
-		QueueElement* nextAdjacentCity = new QueueElement(mapGraph->findCityByName(nextCity->getCityName()), nextCity->getDistance() + distanceToCity);
+		QueueElement* nextAdjacentCity = new QueueElement(
+			mapGraph->findCityByName(nextCity->getCityName()), nextCity->getDistance() + distanceToCity
+			);
 		addToQueue(nextAdjacentCity);
 		nextCity = nextCity->getNextNode();
 	}

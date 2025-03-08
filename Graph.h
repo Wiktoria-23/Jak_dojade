@@ -1,5 +1,6 @@
 #pragma once
 #include "cityNameNode.h"
+
 class Graph {
 private:
 	List<cityNameNode>* cityNames;

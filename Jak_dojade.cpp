@@ -69,16 +69,25 @@ char* addCityName(int x, int y, char** map, int width, int height, Graph* mapGra
 	else if (x - 1 >= 0 && map[y][x - 1] != NOTHING && map[y][x - 1] != ROAD && map[y][x - 1] != CITY_SYMBOL) {
 		size = readCityName(input, x - 1, map[y], width);
 	}
-	else if (x + 1 < width && y + 1 < height && map[y + 1][x + 1] != NOTHING && map[y + 1][x + 1] != ROAD && map[y + 1][x + 1] != CITY_SYMBOL) {
+	else if (
+		x + 1 < width && y + 1 < height && map[y + 1][x + 1] != NOTHING && map[y + 1][x + 1] != ROAD
+		&& map[y + 1][x + 1] != CITY_SYMBOL
+		) {
 		size = readCityName(input, x + 1, map[y + 1], width);
 	}
-	else if (y + 1 < height && x - 1 >= 0 && map[y + 1][x - 1] != NOTHING && map[y + 1][x - 1] != ROAD && map[y + 1][x - 1] != CITY_SYMBOL) {
+	else if (y + 1 < height && x - 1 >= 0 && map[y + 1][x - 1] != NOTHING && map[y + 1][x - 1] != ROAD
+		&& map[y + 1][x - 1] != CITY_SYMBOL
+		) {
 		size = readCityName(input, x - 1, map[y + 1], width);
 	}
-	else if (x - 1 >= 0 && y - 1 >= 0 && map[y - 1][x - 1] != NOTHING && map[y - 1][x - 1] != ROAD && map[y - 1][x - 1] != CITY_SYMBOL) {
+	else if (x - 1 >= 0 && y - 1 >= 0 && map[y - 1][x - 1] != NOTHING && map[y - 1][x - 1] != ROAD
+		&& map[y - 1][x - 1] != CITY_SYMBOL
+		) {
 		size = readCityName(input, x - 1, map[y - 1], width);
 	}
-	else if (x + 1 < width && y - 1 >= 0 && map[y - 1][x + 1] != NOTHING && map[y - 1][x + 1] != ROAD && map[y - 1][x + 1] != CITY_SYMBOL) {
+	else if (x + 1 < width && y - 1 >= 0 && map[y - 1][x + 1] != NOTHING && map[y - 1][x + 1] != ROAD
+		&& map[y - 1][x + 1] != CITY_SYMBOL
+		) {
 		size = readCityName(input, x + 1, map[y - 1], width);
 	}
 	char* cityName = new char[size + 1];
@@ -97,7 +106,10 @@ void addRoad(Graph* mapGraph, char* cityName, int cityX, int cityY, int distance
 	mapGraph->findCityByName(destination->getCityName())->addNewAdjacentCity(distance, cityName);
 }
 
-void checkRoads(List<SearchingNode>* toSearch, char** map, bool** checkedRoads, Graph* mapGraph, char* cityName, int width, int height) {
+void checkRoads(
+	List<SearchingNode>* toSearch, char** map, bool** checkedRoads, Graph* mapGraph, char* cityName, int width,
+	int height
+	) {
 	SearchingNode* tmp = toSearch->getHead();
 	while (tmp != nullptr) {
 		int x = tmp->getX();
@@ -164,7 +176,10 @@ void readMap(int height, int width, char** map, Graph* mapGraph, bool** checkedR
 		for (int x = 0; x < width; x++) {
 			if (map[y][x] == CITY_SYMBOL) {
 				int counter = 0;
-				if ((y - 1 >= 0 && (map[y - 1][x] == ROAD || map[y - 1][x] == CITY_SYMBOL)) || (y + 1 < height && (map[y + 1][x] == ROAD || map[y + 1][x] == CITY_SYMBOL)) || (x - 1 >= 0 && (map[y][x - 1] == ROAD || map[y][x - 1] == CITY_SYMBOL)) || (x + 1 < width && (map[y][x + 1] == ROAD || map[y][x + 1] == CITY_SYMBOL))) {
+				if ((y - 1 >= 0 && (map[y - 1][x] == ROAD || map[y - 1][x] == CITY_SYMBOL))
+					|| (y + 1 < height && (map[y + 1][x] == ROAD || map[y + 1][x] == CITY_SYMBOL))
+					|| (x - 1 >= 0 && (map[y][x - 1] == ROAD || map[y][x - 1] == CITY_SYMBOL))
+					|| (x + 1 < width && (map[y][x + 1] == ROAD || map[y][x + 1] == CITY_SYMBOL))) {
 					List<SearchingNode>* toSearch = new List<SearchingNode>();
 					SearchingNode* newRoad = new SearchingNode(x, y, 0);
 					checkedRoads[y][x] = true;
@@ -235,11 +250,16 @@ void printRoad(shortestRoadToCity* city, char* endingPoint) {
 	}
 }
 
-void checkDistances(cityNameNode* currentCity, Graph* mapGraph, shortestRoadToCity* citiesArr, shortestRoadToCity* previousCity) {
+void checkDistances(
+	cityNameNode* currentCity, Graph* mapGraph, shortestRoadToCity* citiesArr, shortestRoadToCity* previousCity
+	) {
 	adjacentCityNode* tmp = currentCity->getAdjacentCitiesList()->getHead();
 	while (tmp != nullptr) {
 		for (int i = 0; i < mapGraph->getAmount(); i++) {
-			if (compareText(citiesArr[i].cityName, tmp->getCityName()) && tmp->getDistance() + previousCity->distance < citiesArr[i].distance) {
+			if (
+				compareText(citiesArr[i].cityName, tmp->getCityName())
+				&& tmp->getDistance() + previousCity->distance < citiesArr[i].distance
+				) {
 				citiesArr[i].distance = tmp->getDistance() + previousCity->distance;
 				if (previousCity->distance != 0) {
 					citiesArr[i].next = previousCity;

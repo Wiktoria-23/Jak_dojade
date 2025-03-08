@@ -1,8 +1,10 @@
 #include "Graph.h"
 #include <iostream>
+
 Graph::Graph() : amount(NULL) {
 	cityNames = new List<cityNameNode>();
 }
+
 cityNameNode* Graph::findCityByName(char* cityName) {
 	cityNameNode* currentCityName = cityNames->getHead();
 	while (true) {
@@ -19,9 +21,11 @@ cityNameNode* Graph::findCityByName(char* cityName) {
 		currentCityName = currentCityName->getNextNode();
 	}
 }
+
 int Graph::getAmount() const {
 	return amount;
 }
+
 cityNameNode* Graph::findCityByNumber(int number) {
 	int counter = 0;
 	cityNameNode* tmp = cityNames->getHead();
@@ -31,9 +35,11 @@ cityNameNode* Graph::findCityByNumber(int number) {
 	}
 	return tmp;
 }
+
 List<cityNameNode>* Graph::getCityNames() {
 	return cityNames;
 }
+
 void Graph::setAllCitiesUnvisited() {
 	cityNameNode* tmp = getCityNames()->getHead();
 	while (tmp != nullptr) {
@@ -41,6 +47,7 @@ void Graph::setAllCitiesUnvisited() {
 		tmp = tmp->getNextNode();
 	}
 }
+
 cityNameNode* Graph::findCityByCoordinates(int xPosition, int yPosition) {
 	cityNameNode* currentCityName = cityNames->getHead();
 	while (currentCityName != nullptr && (currentCityName->getX() != xPosition || currentCityName->getY() != yPosition)) {
@@ -48,14 +55,17 @@ cityNameNode* Graph::findCityByCoordinates(int xPosition, int yPosition) {
 	}
 	return currentCityName;
 }
+
 void Graph::addNewCityName(char* newCityName, int xPosition, int yPosition) {
 	cityNameNode* newCityNameNode = new cityNameNode(newCityName, xPosition, yPosition);
 	cityNames->addNewLastNode(newCityNameNode);
 	incrementAmount();
 }
+
 void Graph::incrementAmount() {
 	amount += 1;
 }
+
 Graph::~Graph() {
 	delete cityNames;
 }

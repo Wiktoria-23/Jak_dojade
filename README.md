@@ -1,4 +1,4 @@
-# Jak dojadę
+# Shortest path finder
 <p align="justify">
 The purpose of this program is to determine shortest path between two cities on a given rectangular map. Cities can be connected via roads or one-way flights. The map consists of different types of fields: empty, part of the road or part of a city name. A valid path can traverse only through adjacent road fields or city fields. First line of input is map size, followed by the whole map. After that, amount of flights and flights details are given. Finally, number of queries and queries themselves are given. Queries have two types: type 0 returns distance between cities and type 1 returns distance and the path between cities. An example input looks like this:
   <pre>

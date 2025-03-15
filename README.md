@@ -40,5 +40,5 @@ The purpose of this program is to determine shortest path between two cities on 
 
 ## Implementation
 <p align="justify">
-  The project is implemented in C++ without using STL. Map is searched using the BFS algorithm that uses priority queue to improve efficiency. Additionaly, new cities and their connections are stored in a linked list. Shortest path between cities is calculated using Dijkstra's algorithm.
+  The project is implemented in C++ without using STL. Map is searched using the BFS algorithm that uses priority queue to improve efficiency. Additionally, new cities and their connections are stored in a linked list. Shortest path between cities is calculated using Dijkstra's algorithm.
 </p>
